@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  ans-migration:
+    build: .
+    container_name: ans-migration
+    volumes:
+      - ./logs:/usr/src/app/logs
+      - ./config.json:/usr/src/app/config.json
+      - ./credential.json:/usr/src/app/credential.json
+    restart: unless-stopped
