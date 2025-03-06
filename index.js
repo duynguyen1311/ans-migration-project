@@ -1,45 +1,9 @@
 const axios = require('axios');
-const { google } = require('googleapis');
-const { GoogleAuth } = require('google-auth-library');
 const qs = require('querystring');
-const {getKiotVietAccessToken} = require("./get-access-token");
-const {log, logError} = require("./log");
-
-// Your Google Sheet Configuration
-const CONFIG = {
-    spreadsheetId: '16TrgcBcRP4jnnajVGcys7MY1J1msnwQFQu1u_Mmdjg8',
-    sheetName: 'Công việc',
-    headers: ['Hoá đơn', 'Ngày nhận', 'Ngày trả', 'Tên đồ dùng', 'Công việc', 'Trạng thái', 'Thời gian', 'Người làm', 'Trạng thái thanh toán', 'Ghi chú']
-};
-
-// Status dropdown values
-const STATUS_VALUES = ["Chưa làm", "Đang làm", "Phát sinh", "Hoàn thành", "Đóng đơn"];
-
-// People dropdown values with associated colors
-const PEOPLE_VALUES = ['Chọn người làm', 'Minh', 'Huy', 'Vườn Đào', 'Hà Nội', 'Nam Định'];
-const PEOPLE_COLORS = {
-    "Chọn người làm": [230, 230, 230], // Grey
-    "Minh": [100, 181, 246],  // Light blue
-    "Huy": [255, 138, 128],    // Light red/pink
-    "Vườn Đào": [124, 179, 66],  // Light green
-    "Hà Nội": [255, 183, 77],    // Light orange/amber
-    "Nam Định": [186, 104, 200]   // Light purple
-
-};
-
-// Status colors (RGB values)
-const STATUS_COLORS = {
-    "Chưa làm": [230, 230, 230],     // Grey
-    "Đang làm": [66, 133, 244],      // Blue
-    "Phát sinh": [234, 67, 53],      // Red
-    "Hoàn thành": [251, 188, 4],     // Yellow
-    "Đóng đơn": [52, 168, 83]        // Green
-};
-
-// Your KiotViet API credentials
-const API_CONFIG = {
-    retailer: 'annhungbrand'
-};
+const { getKiotVietAccessToken } = require("./get-access-token");
+const { log, logError } = require("./log");
+const config = require('./config');
+const { getGoogleClient } = require('./get-client');
 
 // Main function to orchestrate the process
 async function main() {
@@ -76,7 +40,7 @@ async function fetchInvoices(accessToken) {
         log(`Fetching invoices for date: ${formattedDate}`);
         const response = await axios.get('https://public.kiotapi.com/invoices', {
             headers: {
-                'Retailer': API_CONFIG.retailer,
+                'Retailer': config.retailer,
                 'Authorization': `Bearer ${accessToken}`
             },
             params: {
@@ -180,36 +144,27 @@ function formatDate(isoDateString) {
 // Function to add invoices to Google Sheet
 async function addToGoogleSheet(invoices) {
     try {
-        // Set up authentication
-        const auth = new GoogleAuth({
-            keyFile: 'credential.json',
-            scopes: [
-                'https://www.googleapis.com/auth/spreadsheets',
-                'https://www.googleapis.com/auth/drive'
-            ],
-        });
-
-        const client = await auth.getClient();
-        const sheets = google.sheets({ version: 'v4', auth: client });
+        // Set up authentication using the dedicated module
+        const { sheets } = await getGoogleClient();
 
         // Verify spreadsheet exists and is accessible
         try {
             await sheets.spreadsheets.get({
-                spreadsheetId: CONFIG.spreadsheetId
+                spreadsheetId: config.spreadsheet.id
             });
-            log(`Connected to spreadsheet: ${CONFIG.spreadsheetId}`);
+            log(`Connected to spreadsheet: ${config.spreadsheet.id}`);
         } catch (error) {
             throw new Error(`Cannot access spreadsheet. Error: ${error.message}`);
         }
 
         // Check if sheet exists
         const spreadsheet = await sheets.spreadsheets.get({
-            spreadsheetId: CONFIG.spreadsheetId,
+            spreadsheetId: config.spreadsheet.id,
             includeGridData: false
         });
 
         const sheetExists = spreadsheet.data.sheets.some(
-            sheet => sheet.properties.title === CONFIG.sheetName
+            sheet => sheet.properties.title === config.spreadsheet.sheetName
         );
 
         let sheetId = null;
@@ -217,13 +172,13 @@ async function addToGoogleSheet(invoices) {
         if (!sheetExists) {
             // Create the sheet if it doesn't exist
             const response = await sheets.spreadsheets.batchUpdate({
-                spreadsheetId: CONFIG.spreadsheetId,
+                spreadsheetId: config.spreadsheet.id,
                 requestBody: {
                     requests: [
                         {
                             addSheet: {
                                 properties: {
-                                    title: CONFIG.sheetName
+                                    title: config.spreadsheet.sheetName
                                 }
                             }
                         }
@@ -236,26 +191,26 @@ async function addToGoogleSheet(invoices) {
 
             // Add headers
             await sheets.spreadsheets.values.update({
-                spreadsheetId: CONFIG.spreadsheetId,
-                range: `${CONFIG.sheetName}!A1:J1`,
+                spreadsheetId: config.spreadsheet.id,
+                range: `${config.spreadsheet.sheetName}!A1:J1`,
                 valueInputOption: 'RAW',
                 requestBody: {
-                    values: [CONFIG.headers]
+                    values: [config.spreadsheet.headers]
                 }
             });
 
-            log(`Created sheet "${CONFIG.sheetName}" with headers`);
+            log(`Created sheet "${config.spreadsheet.sheetName}" with headers`);
         } else {
             // Get the sheet ID if it already exists
             sheetId = spreadsheet.data.sheets.find(
-                sheet => sheet.properties.title === CONFIG.sheetName
+                sheet => sheet.properties.title === config.spreadsheet.sheetName
             ).properties.sheetId;
         }
 
         // Get existing invoice codes to avoid duplicates
         const existingData = await sheets.spreadsheets.values.get({
-            spreadsheetId: CONFIG.spreadsheetId,
-            range: `${CONFIG.sheetName}!A:A`
+            spreadsheetId: config.spreadsheet.id,
+            range: `${config.spreadsheet.sheetName}!A:A`
         });
 
         // Extract existing invoice codes
@@ -294,9 +249,9 @@ async function addToGoogleSheet(invoices) {
                         returnDateAsText,       // Ngày trả
                         item.productName,       // Tên đồ dùng
                         item.work,              // Công việc
-                        STATUS_VALUES[0],       // Trạng thái (will be set via dropdown)
+                        config.statusValues[0],       // Trạng thái (will be set via dropdown)
                         '',                     // Thời gian (empty)
-                        PEOPLE_VALUES[0],       // Người làm (empty for dropdown selection)
+                        config.peopleValues[0],       // Người làm (empty for dropdown selection)
                         invoice.paymentStatus,  // Trạng thái thanh toán
                         ''                      // Ghi chú (empty)
                     ]);
@@ -309,9 +264,9 @@ async function addToGoogleSheet(invoices) {
                     returnDateAsText,       // Ngày trả
                     '',                     // Tên đồ dùng (empty)
                     '',                     // Công việc (empty)
-                    STATUS_VALUES[0],       // Trạng thái (will be set via dropdown)
+                    config.statusValues[0],       // Trạng thái (will be set via dropdown)
                     '',                     // Thời gian (empty)
-                    PEOPLE_VALUES[0],       // Người làm (empty for dropdown selection)
+                    config.peopleValues[0],       // Người làm (empty for dropdown selection)
                     invoice.paymentStatus,  // Trạng thái thanh toán
                     ''                      // Ghi chú (empty)
                 ]);
@@ -325,7 +280,7 @@ async function addToGoogleSheet(invoices) {
 
             // STEP 1: Insert empty rows right after the header (row index 1)
             await sheets.spreadsheets.batchUpdate({
-                spreadsheetId: CONFIG.spreadsheetId,
+                spreadsheetId: config.spreadsheet.id,
                 requestBody: {
                     requests: [
                         {
@@ -345,8 +300,8 @@ async function addToGoogleSheet(invoices) {
 
             // STEP 2: Fill the newly inserted rows with data
             await sheets.spreadsheets.values.update({
-                spreadsheetId: CONFIG.spreadsheetId,
-                range: `${CONFIG.sheetName}!A2:J${1 + numRows}`, // Start at row 2 (after header)
+                spreadsheetId: config.spreadsheet.id,
+                range: `${config.spreadsheet.sheetName}!A2:J${1 + numRows}`, // Start at row 2 (after header)
                 valueInputOption: 'USER_ENTERED', // Handle dates properly
                 requestBody: {
                     values: rows
@@ -359,7 +314,7 @@ async function addToGoogleSheet(invoices) {
 
             // Apply normal formatting and set number formats for date columns
             await sheets.spreadsheets.batchUpdate({
-                spreadsheetId: CONFIG.spreadsheetId,
+                spreadsheetId: config.spreadsheet.id,
                 requestBody: {
                     requests: [
                         {
@@ -506,7 +461,7 @@ async function addToGoogleSheet(invoices) {
             log(`Applied formatting to rows ${startRow}-${endRow}`);
 
             // Set up dropdowns for Status (column F) and People (column H)
-            await setupDropdowns(sheets, CONFIG.spreadsheetId, sheetId);
+            await setupDropdowns(sheets, config.spreadsheet.id, sheetId);
             log(`Applied dropdown to all rows`);
         }
     } catch (error) {
@@ -531,7 +486,7 @@ async function setupDropdowns(sheets, spreadsheetId, sheetId) {
                 rule: {
                     condition: {
                         type: "ONE_OF_LIST",
-                        values: STATUS_VALUES.map(value => ({ userEnteredValue: value }))
+                        values: config.statusValues.map(value => ({ userEnteredValue: value }))
                     },
                     strict: true,
                     showCustomUi: true,
@@ -553,7 +508,7 @@ async function setupDropdowns(sheets, spreadsheetId, sheetId) {
                 rule: {
                     condition: {
                         type: "ONE_OF_LIST",
-                        values: PEOPLE_VALUES.map(value => ({ userEnteredValue: value }))
+                        values: config.peopleValues.map(value => ({ userEnteredValue: value }))
                     },
                     strict: true,
                     showCustomUi: true,
@@ -563,7 +518,7 @@ async function setupDropdowns(sheets, spreadsheetId, sheetId) {
         };
 
         // Create color formatting requests for each status value
-        const colorRequests = Object.entries(STATUS_COLORS).map(([status, [r, g, b]]) => {
+        const colorRequests = Object.entries(config.statusColors).map(([status, [r, g, b]]) => {
             return {
                 addConditionalFormatRule: {
                     rule: {
@@ -601,7 +556,7 @@ async function setupDropdowns(sheets, spreadsheetId, sheetId) {
         });
 
         // Create color formatting requests for each person
-        const peopleColorRequests = Object.entries(PEOPLE_COLORS).map(([person, [r, g, b]]) => {
+        const peopleColorRequests = Object.entries(config.peopleColors).map(([person, [r, g, b]]) => {
             return {
                 addConditionalFormatRule: {
                     rule: {
@@ -655,7 +610,7 @@ async function setupDropdowns(sheets, spreadsheetId, sheetId) {
         // First, get all existing data
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: spreadsheetId,
-            range: `${CONFIG.sheetName}!A:J`
+            range: `${config.spreadsheet.sheetName}!A:J`
         });
 
         if (response.data.values && response.data.values.length > 1) {
@@ -671,16 +626,16 @@ async function setupDropdowns(sheets, spreadsheetId, sheetId) {
                     // Check if Status column (F, index 5) is empty and should have a default
                     if (!row[5] || row[5] === '') {
                         defaultStatusUpdates.push({
-                            range: `${CONFIG.sheetName}!F${i + 1}`,
-                            values: [[STATUS_VALUES[0]]]
+                            range: `${config.spreadsheet.sheetName}!F${i + 1}`,
+                            values: [[config.statusValues[0]]]
                         });
                     }
 
                     // Check if People column (H, index 7) is empty and should have a default
                     if (!row[7] || row[7] === '') {
                         defaultPeopleUpdates.push({
-                            range: `${CONFIG.sheetName}!H${i + 1}`,
-                            values: [[PEOPLE_VALUES[0]]]
+                            range: `${config.spreadsheet.sheetName}!H${i + 1}`,
+                            values: [[config.peopleValues[0]]]
                         });
                     }
                 }

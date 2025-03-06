@@ -16,7 +16,7 @@ node_modules/
 .env.*
 
 # Sensitive credential files (to be mounted as volumes)
-config.json
+config.js
 credential.json
 
 # Docker files
