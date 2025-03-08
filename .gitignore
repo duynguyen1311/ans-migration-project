@@ -20,13 +20,6 @@ out/
 .env.test.local
 .env.production.local
 
-# Logs
-logs
-*.logService
-npm-debug.logService*
-yarn-debug.logService*
-yarn-error.logService*
-
 # OS generated files
 .DS_Store
 .DS_Store?

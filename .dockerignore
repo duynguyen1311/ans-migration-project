@@ -1,7 +1,3 @@
-# Logs
-logs
-*.logService
-
 # Runtime data
 pids
 *.pid
