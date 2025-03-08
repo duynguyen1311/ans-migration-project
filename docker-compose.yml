@@ -1,11 +1,19 @@
 version: '3'
 
 services:
-  ans-migration:
+  ans-background-job:
     build: .
-    container_name: ans-migration
+    container_name: ans-background-job
+    image: ans-background-job:latest
     volumes:
-      - ./logs:/usr/src/app/logs
-      - ./config.js:/usr/src/app/config.js
-      - ./credential.json:/usr/src/app/credential.json
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+      - ans-background-job:/usr/src/app/logs
+    env_file:
+      - .env
     restart: unless-stopped
+    environment:
+      - NODE_PATH=/usr/src/app
+
+volumes:
+  ans-background-job:

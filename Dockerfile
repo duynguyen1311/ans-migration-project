@@ -15,8 +15,13 @@ RUN apk add --no-cache tzdata
 RUN cp /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime
 RUN echo "Asia/Ho_Chi_Minh" > /etc/timezone
 
-# Bundle app source
+# Bundle app source - be explicit about copying all directories
 COPY . .
+
+# Ensure the config.js file is in the proper location
+RUN ls -la && \
+    echo "Checking if config.js exists:" && \
+    ls -la config.js || echo "config.js not found!"
 
 # Create logs directory with proper permissions
 RUN mkdir -p logs && chmod -R 755 logs

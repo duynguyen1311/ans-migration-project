@@ -2,19 +2,18 @@
 const fs = require('fs');
 const path = require('path');
 
-// Create logs directory if it doesn't exist
-const logsDir = path.join(__dirname, 'logs');
+// Use logs directory in the root folder
+const logsDir = path.join(process.cwd(), 'logs');
 if (!fs.existsSync(logsDir)) {
     fs.mkdirSync(logsDir, { recursive: true });
 }
-
 // Log file path - one file per day
 function getLogFilePath() {
     const date = new Date();
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return path.join(logsDir, `migration-${year}-${month}-${day}.log`);
+    return path.join(logsDir, `job-${year}-${month}-${day}.log`);
 }
 
 // Log message to both console and file
