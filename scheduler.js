@@ -1,7 +1,7 @@
 // scheduler.js
 const cron = require('node-cron');
 const workMigrationJob = require('./job/workMigrationJob');
-const DailyReportJob = require('./job/DailyReportJob');
+const DailyReportJob = require('./job/dailyReportJob');
 const { log, logError } = require('./service/log-service');
 const config = require('./config');
 
