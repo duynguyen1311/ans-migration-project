@@ -17,19 +17,24 @@ module.exports = {
   // Telegram Bot Configuration
   telegram: {
     botToken: process.env.TELEGRAM_BOT_TOKEN,
-    chatId: process.env.TELEGRAM_CHAT_ID
+    chatId: process.env.TELEGRAM_GROUP_CHAT_ID,
+    topics: {
+      feedback: process.env.TELEGRAM_FEEDBACK_TOPIC_ID,
+      dailyReport: process.env.TELEGRAM_DAILY_REPORT_TOPIC_ID
+    }
   },
 
   // Status dropdown values
   statusValues: ["Chưa làm", "Đang làm", "Phát sinh", "Hoàn thành", "Đóng đơn"],
 
   // People dropdown values with associated colors
-  peopleValues: ['Chọn người làm', 'Minh', 'Huy', 'Vườn Đào', 'Hà Nội', 'Nam Định'],
+  peopleValues: ['Chọn người làm', 'Minh', 'Huy', 'Thắng', 'Vườn Đào', 'Hà Nội', 'Nam Định'],
 
   peopleColors: {
     "Chọn người làm": [230, 230, 230], // Grey
     "Minh": [100, 181, 246],  // Light blue
     "Huy": [255, 138, 128],    // Light red/pink
+    "Thắng": [0, 188, 212],    // Teal/cyan
     "Vườn Đào": [124, 179, 66],  // Light green
     "Hà Nội": [255, 183, 77],    // Light orange/amber
     "Nam Định": [186, 104, 200]   // Light purple

@@ -1,9 +1,9 @@
 {
   "name": "ans-migration",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "job/workMigrationJob.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node main.js",
     "schedule": "node scheduler.js"
   },
   "keywords": [],

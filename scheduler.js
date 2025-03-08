@@ -1,13 +1,15 @@
 // scheduler.js
 const cron = require('node-cron');
-const { main } = require('./index');
-const { log, logError } = require('./log');
+const workMigrationJob = require('./job/workMigrationJob');
+const { log, logError } = require('./service/log-service');
+const config = require('./config');
 
 // Main function to run the invoice sync
 async function runInvoiceSync() {
     try {
         log('Starting migration process...');
-        await main();
+        // Using the static method to run the integration
+        await workMigrationJob.run(config);
         log('Migration completed successfully');
     } catch (error) {
         logError(`Error running migration: ${error.message}`);

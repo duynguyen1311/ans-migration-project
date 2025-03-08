@@ -1,4 +1,4 @@
-// log.js - Centralized logging module
+// logService.js - Centralized logging module
 const fs = require('fs');
 const path = require('path');
 
@@ -18,7 +18,7 @@ function getLogFilePath() {
 }
 
 // Log message to both console and file
-function log(message) {
+function logService(message) {
     // Get timestamp in Vietnamese timezone
     const now = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
     const logMessage = `[${now}] ${message}`;
@@ -51,4 +51,4 @@ function logError(message) {
     }
 }
 
-module.exports = { log, logError };
+module.exports = { log: logService, logError };

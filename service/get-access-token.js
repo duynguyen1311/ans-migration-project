@@ -1,7 +1,7 @@
 const axios = require('axios');
 const qs = require('querystring');
-const config = require('./config');
-const { log, logError } = require('./log');
+const config = require('../config');
+const { log, logError } = require('./log-service');
 
 async function getKiotVietAccessToken() {
     try {

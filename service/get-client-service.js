@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
 const { GoogleAuth } = require('google-auth-library');
-const { log, logError } = require('./log');
+const { log, logError } = require('./log-service');
 
 /**
  * Create a Google API client with proper authentication
