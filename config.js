@@ -25,7 +25,7 @@ module.exports = {
   },
 
   // Status dropdown values
-  statusValues: ["Chưa làm", "Đang làm", "Phát sinh", "Hoàn thành", "Đóng đơn"],
+  statusValues: ["Chưa làm", "Đang làm", "Phát sinh", "Hoàn thành", "Đóng đơn", "Huỷ đơn"],
 
   // People dropdown values with associated colors
   peopleValues: ['Chọn người làm', 'Minh', 'Huy', 'Thắng', 'Vườn Đào', 'Hà Nội', 'Nam Định'],
@@ -46,6 +46,7 @@ module.exports = {
     "Đang làm": [66, 133, 244],      // Blue
     "Phát sinh": [234, 67, 53],      // Red
     "Hoàn thành": [251, 188, 4],     // Yellow
-    "Đóng đơn": [52, 168, 83]        // Green
+    "Đóng đơn": [52, 168, 83],       // Green
+    "Huỷ đơn": [156, 39, 176]        // Purple
   }
 };

@@ -17,7 +17,7 @@ async function runInvoiceSync() {
     }
 }
 
-// Main function to run the unestimated items report (22:00)
+// Main function to run the unestimated items report (9:00)
 async function runUnestimatedReport() {
     try {
         log('Starting unestimated items report process...');
@@ -38,6 +38,18 @@ async function runDueAndOverdueReport() {
         log('Due/overdue items report completed successfully');
     } catch (error) {
         logError(`Error running due/overdue items report: ${error.message}`);
+    }
+}
+
+// Main function to run the phat sinh work items report (9:05)
+async function runAdditionalWorkReport() {
+    try {
+        log('Starting additional work items report process...');
+        // Using the dedicated static method for additional work items
+        await DailyReportJob.runPhatSinh(config);
+        log('Additional work items report completed successfully');
+    } catch (error) {
+        logError(`Error running additional work items report: ${error.message}`);
     }
 }
 
@@ -71,12 +83,23 @@ cron.schedule('30 8 * * *', () => {
 
 // Schedule the unestimated items report to run at 9:00 every day
 // Cron format: 0 9 * * * = At 9:00 AM, every day
-log('Unestimated items report scheduler started - will run at 10:00 PM every day');
+log('Unestimated items report scheduler started - will run at 9:00 AM every day');
 cron.schedule('0 9 * * *', () => {
     log('>>>>>>>>>>>>>>>>>>> START RUNNING UNESTIMATED TIME JOB >>>>>>>>>>>>>>>>>>>')
     log('Running scheduled unestimated items report task...');
     runUnestimatedReport().then(() => {
         log('Unestimated items report task completed');
+    });
+});
+
+// Schedule the additional work items report to run at 9:00 AM every day
+// Cron format: 0 9 * * * = At 9:00 AM, every day
+log('Additional work items report scheduler started - will run at 9:05 AM every day');
+cron.schedule('5 9 * * *', () => {
+    log('>>>>>>>>>>>>>>>>>>> START RUNNING ADDITIONAL WORK JOB >>>>>>>>>>>>>>>>>>>')
+    log('Running scheduled additional work items report task...');
+    runAdditionalWorkReport().then(() => {
+        log('Additional work items report task completed');
     });
 });
 

@@ -98,6 +98,36 @@ class DailyReportJob {
     }
 
     /**
+     * Run the "Phát sinh" items report
+     * @returns {Promise<boolean>} True if process completed successfully
+     */
+    async runPhatSinhReport() {
+        try {
+            this.log('Starting Phát sinh items report job...');
+
+            // Read data from the Google Sheet for Phát sinh items
+            const phatSinhItems = await this.readPhatSinhData();
+
+            this.log(`Found ${phatSinhItems.length} items with "Phát sinh" status`);
+
+            // Send message for Phát sinh items
+            if (phatSinhItems.length > 0) {
+                const phatSinhMessage = this.formatPhatSinhMessage(phatSinhItems);
+                await this.telegramBot.sendToDailyReportTopic(phatSinhMessage);
+                this.log('Phát sinh items report sent to Telegram successfully');
+            } else {
+                this.log('No Phát sinh items found, skipping that report');
+            }
+
+            this.log('Phát sinh items report job completed successfully');
+            return true;
+        } catch (error) {
+            this.logError(`Error in Phát sinh items report job: ${error.message}`);
+            return false;
+        }
+    }
+
+    /**
      * Original main method maintained for backward compatibility
      * @returns {Promise<boolean>} True if process completed successfully
      */
@@ -108,6 +138,7 @@ class DailyReportJob {
             // Run both reports
             await this.runUnestimatedReport();
             await this.runDueAndOverdueReport();
+            await this.runPhatSinhReport();
 
             this.log('Complete daily report job completed successfully');
             return true;
@@ -155,6 +186,7 @@ class DailyReportJob {
      * Read data from the Google Sheet and filter for rows with:
      * 1. "Ngày nhận" (column B) equal to the specified date (today or yesterday)
      * 2. Empty "Thời gian" values (column G)
+     * 3. "Trạng thái" (column F) not equal to "Phát sinh" or "Huỷ đơn"
      *
      * @param {boolean} useYesterday - Whether to use yesterday's date instead of today's
      * @returns {Promise<{invoiceCodes: Array<string>, totalRows: number, todayRows: number}>}
@@ -187,6 +219,7 @@ class DailyReportJob {
             // 1. Rows with "Ngày nhận" (column B, index 1) equal to today's date
             // 2. Rows with empty "Thời gian" (column G, index 6)
             // 3. Rows with a valid invoice code (column A, index 0)
+            // 4. Rows where "Trạng thái" (column F, index 5) is not "Phát sinh" or "Huỷ đơn"
             const incompleteRows = rows.slice(1).filter((row) => {
                 // Check if row has enough columns and has an invoice code
                 if (row.length < 2 || !row[0]) {
@@ -225,7 +258,22 @@ class DailyReportJob {
 
                 // Check if "Thời gian" column is empty
                 // The column G is at index 6, but some rows might not have that many columns
-                return row.length <= 6 || !row[6] || row[6].trim() === '';
+                const hasEmptyTimeEstimate = row.length <= 6 || !row[6] || row[6].trim() === '';
+
+                if (!hasEmptyTimeEstimate) {
+                    return false;
+                }
+
+                // Check if "Trạng thái" column is "Phát sinh" or "Huỷ đơn"
+                // The column F is at index 5, but some rows might not have that many columns
+                if (row.length > 5 && row[5]) {
+                    const status = row[5].trim();
+                    if (status === "Phát sinh" || status === "Huỷ đơn") {
+                        return false;
+                    }
+                }
+
+                return true;
             });
 
             // Count how many rows were received today (regardless of Thời gian status)
@@ -436,6 +484,84 @@ class DailyReportJob {
     }
 
     /**
+     * Read data from the Google Sheet and filter for rows with "Trạng thái" = "Phát sinh"
+     *
+     * @returns {Promise<Array<{code: string, item: string, work: string}>>} Array of objects with invoice codes and item details
+     */
+    async readPhatSinhData() {
+        try {
+            // Set up authentication using the dedicated module
+            const { sheets } = await this.getGoogleClient();
+
+            // Get all data from the sheet
+            const response = await sheets.spreadsheets.values.get({
+                spreadsheetId: this.config.spreadsheet.id,
+                range: `${this.config.spreadsheet.sheetName}!A:F` // We need columns A (invoice code), D (item), E (work), F (status)
+            });
+
+            // Get the rows
+            const rows = response.data.values || [];
+
+            if (rows.length <= 1) {
+                // Only header row or empty sheet
+                return [];
+            }
+
+            // Skip the header row and filter for rows with "Trạng thái" = "Phát sinh"
+            const phatSinhRows = rows.slice(1).filter((row) => {
+                // Check if row has enough columns and has an invoice code
+                if (row.length < 6 || !row[0]) {
+                    return false;
+                }
+
+                // Check if "Trạng thái" column is "Phát sinh"
+                // The column F is at index 5
+                if (row.length > 5 && row[5]) {
+                    const status = row[5].trim();
+                    return status === "Phát sinh";
+                }
+
+                return false;
+            });
+
+            // Convert rows to objects with invoice code and details
+            const phatSinhItems = phatSinhRows.map(row => ({
+                code: row[0],                    // Hoá đơn (column A)
+                item: row.length > 3 ? row[3] : '', // Tên đồ dùng (column D)
+                work: row.length > 4 ? row[4] : ''  // Công việc (column E)
+            }));
+
+            // Group by invoice code to avoid duplicates
+            const groupedItems = new Map();
+
+            phatSinhItems.forEach(item => {
+                if (!groupedItems.has(item.code)) {
+                    groupedItems.set(item.code, []);
+                }
+
+                // Only add if there's an item or work description
+                if (item.item || item.work) {
+                    groupedItems.get(item.code).push({
+                        item: item.item,
+                        work: item.work
+                    });
+                }
+            });
+
+            // Convert the Map to an array of objects with code and details
+            const result = Array.from(groupedItems.entries()).map(([code, details]) => ({
+                code,
+                details
+            }));
+
+            return result;
+        } catch (error) {
+            this.logError(`Error reading Phát sinh data: ${error.message}`);
+            throw error;
+        }
+    }
+
+    /**
      * Format the message for incomplete invoices (missing time estimates)
      *
      * @param {Array<string>} invoiceCodes - Array of unique invoice codes with empty Thời gian
@@ -534,6 +660,50 @@ class DailyReportJob {
     }
 
     /**
+     * Format the message for Phát sinh invoices
+     *
+     * @param {Array<{code: string, details: Array<{item: string, work: string}>}>} phatSinhItems - Array of items with "Phát sinh" status
+     * @returns {string} Formatted message
+     */
+    formatPhatSinhMessage(phatSinhItems) {
+        // Using emojis that work well in Telegram
+        let message = `🔄 BÁO CÁO ĐƠN PHÁT SINH 🔄\n\n`;
+
+        // Phát sinh invoices
+        message += `📋 Các mã hóa đơn có trạng thái PHÁT SINH (${phatSinhItems.length}):\n\n`;
+
+        // Add each invoice code with its items and work details
+        phatSinhItems.forEach((item, index) => {
+            message += `${index + 1}. ${item.code}\n`;
+
+            // Add item details if available
+            if (item.details && item.details.length > 0) {
+                item.details.forEach((detail, detailIndex) => {
+                    // Format the details with item and work
+                    let detailText = '';
+                    if (detail.item) {
+                        detailText += `   - ${detail.item}`;
+                    }
+                    if (detail.work) {
+                        detailText += detailText ? ` + ${detail.work}` : `   - ${detail.work}`;
+                    }
+
+                    if (detailText) {
+                        message += `${detailText}\n`;
+                    }
+                });
+            }
+
+            // Add a blank line between items for better readability
+            message += '\n';
+        });
+
+        message += '⚠️ Vui lòng kiểm tra và xử lý các đơn phát sinh trên.';
+
+        return message;
+    }
+
+    /**
      * Static method to run the unestimated report job
      *
      * @param {Object} config - Configuration object
@@ -564,6 +734,17 @@ class DailyReportJob {
     static async run(config) {
         const job = new DailyReportJob(config);
         return job.main();
+    }
+
+    /**
+     * Static method to run the Phát sinh report job
+     *
+     * @param {Object} config - Configuration object
+     * @returns {Promise<boolean>} Result of the job process
+     */
+    static async runPhatSinh(config) {
+        const job = new DailyReportJob(config);
+        return job.runPhatSinhReport();
     }
 }
 

@@ -8,10 +8,26 @@ class Main {
         const workMigration = new workMigrationJob(config);
         await workMigration.main();
     }
-    async runDailyReportJob() {
+    async runAllDailyReportJob() {
         const dailyReport = new DailyReportJob(config)
         await dailyReport.main();
     }
+
+    async runUnestimatedReport() {
+        const dailyReport = new DailyReportJob(config)
+        await dailyReport.runUnestimatedReport();
+    }
+
+    async runDueOverDueReport() {
+        const dailyReport = new DailyReportJob(config)
+        await dailyReport.runDueAndOverdueReport();
+    }
+
+    async runPhatSinhReport() {
+        const dailyReport = new DailyReportJob(config)
+        await dailyReport.runPhatSinhReport();
+    }
+
     async testTeleBot() {
         const tele = new TelegramBot();
         await tele.getUpdates();
@@ -26,7 +42,16 @@ const main = new Main();
 //main.runWorkMigrationJob();
 
 /*Report daily job*/
-//main.runDailyReportJob();
+//main.runAllDailyReportJob();
+
+/*Report unestimated job*/
+//main.runUnestimatedReport();
+
+/*Report phat sinh job*/
+//main.runPhatSinhReport();
+
+/*Report due&overdue job*/
+//main.runDueOverDueReport();
 
 /*Test telegram bot*/
-main.testTeleBot();
+//main.testTeleBot();
