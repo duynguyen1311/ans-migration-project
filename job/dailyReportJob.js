@@ -323,7 +323,7 @@ class DailyReportJob {
      * Read data from the Google Sheet and filter for rows with "Ngày trả" (column C) equal to today's date
      * or in the past, excluding rows with "Trạng thái" = "Đơn đã đóng"
      *
-     * @returns {Promise<{dueTodayItems: Array<{code: string, dueDate: string}>, overdueItems: Array<{code: string, dueDate: string}>}>}
+     * @returns {Promise<{dueTodayItems: Array<{code: string, dueDate: string}>, overdueItems: Array<{code: string, dueDate: string, delayStatus: string}>}>}
      * Arrays of objects with invoice codes and due dates, separated by whether they're due today or overdue
      */
     async readDueTodayData() {
@@ -331,10 +331,10 @@ class DailyReportJob {
             // Set up authentication using the dedicated module
             const { sheets } = await this.getGoogleClient();
 
-            // Get all data from the sheet
+            // Get all data from the sheet - Now including columns K for "Lần Delay" and L for "Ngày trả mới"
             const response = await sheets.spreadsheets.values.get({
                 spreadsheetId: this.config.spreadsheet.id,
-                range: `Công việc!A:F` // We need columns A (invoice code), C (Ngày trả), and F (Trạng thái)
+                range: `${this.config.spreadsheet.sheetName}!A:L` // Extended to include columns K and L
             });
 
             // Get the rows
@@ -405,11 +405,20 @@ class DailyReportJob {
                     return; // Skip this row
                 }
 
-                // Get the Ngày trả value (column C, index 2)
-                const dueDate = row[2] ? row[2].trim() : '';
+                // Check if "Ngày trả mới" has a value, use it if it does, otherwise use the original date
+                let effectiveDueDate = '';
 
-                // Skip if no valid date format is found
-                const dateParts = extractDatePart(dueDate);
+                // Get the original Ngày trả value (column C, index 2)
+                const originalDueDate = row[2] ? row[2].trim() : '';
+
+                // Check if we have a rescheduled due date (Ngày trả mới, column L, index 11)
+                const rescheduledDueDate = row.length > 11 && row[11] ? row[11].trim() : '';
+
+                // If rescheduled date exists, use it; otherwise, use the original date
+                effectiveDueDate = rescheduledDueDate || originalDueDate;
+
+                // Skip if no valid date format is found in the effective due date
+                const dateParts = extractDatePart(effectiveDueDate);
                 if (!dateParts) {
                     return; // Skip this row
                 }
@@ -419,11 +428,23 @@ class DailyReportJob {
                     return; // Skip this row
                 }
 
-                // Sort into the appropriate array based on date
-                if (isToday(dueDate)) {
-                    dueTodayRows.push(row);
-                } else if (isOverdue(dueDate)) {
-                    overdueRows.push(row);
+                // Sort into the appropriate array based on the effective due date (prioritizing rescheduled date if available)
+                if (isToday(effectiveDueDate)) {
+                    // Add the due dates to the row for later use
+                    const rowWithDates = [...row];
+                    rowWithDates.effectiveDueDate = effectiveDueDate;
+                    rowWithDates.originalDueDate = originalDueDate;
+                    rowWithDates.rescheduledDueDate = rescheduledDueDate;
+                    rowWithDates.isUsingRescheduledDate = rescheduledDueDate && effectiveDueDate === rescheduledDueDate;
+                    dueTodayRows.push(rowWithDates);
+                } else if (isOverdue(effectiveDueDate)) {
+                    // Add the due dates to the row for later use
+                    const rowWithDates = [...row];
+                    rowWithDates.effectiveDueDate = effectiveDueDate;
+                    rowWithDates.originalDueDate = originalDueDate;
+                    rowWithDates.rescheduledDueDate = rescheduledDueDate;
+                    rowWithDates.isUsingRescheduledDate = rescheduledDueDate && effectiveDueDate === rescheduledDueDate;
+                    overdueRows.push(rowWithDates);
                 }
                 // Future dates are ignored
             });
@@ -438,7 +459,9 @@ class DailyReportJob {
                 if (!uniqueCodesMap.has(code)) {
                     uniqueCodesMap.set(code, {
                         type: 'dueToday',
-                        dueDate: row[2]
+                        dueDate: row.effectiveDueDate, // Using effective date (prioritizes rescheduled date)
+                        originalDueDate: row.originalDueDate,
+                        isUsingRescheduledDate: row.isUsingRescheduledDate
                     });
                 }
             });
@@ -447,9 +470,15 @@ class DailyReportJob {
             overdueRows.forEach(row => {
                 const code = row[0];
                 if (!uniqueCodesMap.has(code)) {
+                    // Get the delay status from column K (index 10) if it exists
+                    const delayStatus = row.length > 10 && row[10] && row[10] !== this.config.delayValues[0]
+                        ? row[10]
+                        : '';
+
                     uniqueCodesMap.set(code, {
                         type: 'overdue',
-                        dueDate: row[2]
+                        dueDate: row[2],
+                        delayStatus: delayStatus
                     });
                 }
             });
@@ -462,12 +491,17 @@ class DailyReportJob {
                 if (data.type === 'dueToday') {
                     dueTodayItems.push({
                         code: code,
-                        dueDate: data.dueDate
+                        dueDate: data.dueDate,
+                        originalDueDate: data.originalDueDate,
+                        isUsingRescheduledDate: data.isUsingRescheduledDate
                     });
                 } else if (data.type === 'overdue') {
                     overdueItems.push({
                         code: code,
-                        dueDate: data.dueDate
+                        dueDate: data.dueDate,
+                        originalDueDate: data.originalDueDate,
+                        delayStatus: data.delayStatus,
+                        isUsingRescheduledDate: data.isUsingRescheduledDate
                     });
                 }
             });
@@ -605,7 +639,7 @@ class DailyReportJob {
     /**
      * Format the message for invoices due today
      *
-     * @param {Array<{code: string, dueDate: string}>} dueTodayItems - Array of items due today
+     * @param {Array<{code: string, dueDate: string, originalDueDate: string, isUsingRescheduledDate: boolean}>} dueTodayItems - Array of items due today
      * @returns {string} Formatted message
      */
     formatDueTodayMessage(dueTodayItems) {
@@ -623,9 +657,16 @@ class DailyReportJob {
         // Invoices due for return today
         message += `📦 Các mã hóa đơn cần trả HÔM NAY (${dueTodayItems.length}):\n\n`;
 
-        // Add each invoice code with its original due date value
+        // Add each invoice code with its due date value (which might be the rescheduled date)
         dueTodayItems.forEach((item, index) => {
-            message += `${index + 1}. ${item.code} - ${item.dueDate}\n`;
+            let itemText = `${index + 1}. ${item.code} - ${item.dueDate}`;
+
+            // If using a rescheduled date, indicate it's different from the original
+            if (item.isUsingRescheduledDate && item.dueDate !== item.originalDueDate) {
+                itemText += ` 🔄 (gốc: ${item.originalDueDate})`;
+            }
+
+            message += `${itemText}\n`;
         });
 
         message += '\n📦 Vui lòng kiểm tra và trả đúng hạn các mã đơn trên.';
@@ -636,7 +677,7 @@ class DailyReportJob {
     /**
      * Format the message for overdue invoices
      *
-     * @param {Array<{code: string, dueDate: string}>} overdueItems - Array of overdue items
+     * @param {Array<{code: string, dueDate: string, originalDueDate: string, delayStatus: string, isUsingRescheduledDate: boolean}>} overdueItems - Array of overdue items with delay status
      * @returns {string} Formatted message
      */
     formatOverdueMessage(overdueItems) {
@@ -649,9 +690,16 @@ class DailyReportJob {
         // Overdue invoices
         message += `⚠️ Các mã hóa đơn ĐÃ QUÁ HẠN (${overdueItems.length}):\n\n`;
 
-        // Add each invoice code with its original due date value
+        // Add each invoice code with its original due date value and delay status if available
         overdueItems.forEach((item, index) => {
-            message += `${index + 1}. ${item.code} - ${item.dueDate}\n`;
+            let itemText = `${index + 1}. ${item.code} - ${item.dueDate}`;
+
+            // Add delay status if it exists and is not the default value
+            if (item.delayStatus && item.delayStatus !== this.config.delayValues[0]) {
+                itemText += ` (${item.delayStatus})`;
+            }
+
+            message += `${itemText}\n`;
         });
 
         message += '\n⚠️ Các mã đơn trên đã quá hạn trả, cần xử lý NGAY!';

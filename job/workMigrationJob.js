@@ -77,7 +77,7 @@ class workMigrationJob {
                 params: {
                     pageSize: 200,
                     status: '[1,3]',
-                    fromPurchaseDate: formattedDate,
+                    fromPurchaseDate: formattedDate, // 2025-03-02
                     toPurchaseDate: formattedDate,
                     orderBy: 'purchaseDate',
                     orderDirection: 'Desc'
@@ -150,9 +150,9 @@ class workMigrationJob {
                 result.paymentStatus = 'Chưa thanh toán'
             }
             // Check if it's the return date
-            else if (line.trim().startsWith('Hẹn trả:')) {
-                // Extract just the date part
-                result.returnDate = line.replace('Hẹn trả:', '').trim();
+            else if (line.trim().toLowerCase().startsWith('hẹn trả:')) {
+                // Extract just the date part using case-insensitive regex
+                result.returnDate = line.replace(/hẹn trả:/i, '').trim();
             }
         });
 
@@ -239,7 +239,7 @@ class workMigrationJob {
                 // Add headers
                 await sheets.spreadsheets.values.update({
                     spreadsheetId: this.config.spreadsheet.id,
-                    range: `${this.config.spreadsheet.sheetName}!A1:J1`,
+                    range: `${this.config.spreadsheet.sheetName}!A1:L1`,
                     valueInputOption: 'RAW',
                     requestBody: {
                         values: [this.config.spreadsheet.headers]
@@ -300,7 +300,9 @@ class workMigrationJob {
                             '',                     // Thời gian (empty)
                             this.config.peopleValues[0],       // Người làm (empty for dropdown selection)
                             invoice.paymentStatus,  // Trạng thái thanh toán
-                            ''                      // Ghi chú (empty)
+                            '',                     // Ghi chú (empty)
+                            this.config.delayValues[0],       // Lần Delay (default to first value)
+                            ''                      // Ngày trả mới (empty)
                         ]);
                     });
                 } else {
@@ -315,7 +317,9 @@ class workMigrationJob {
                         '',                     // Thời gian (empty)
                         this.config.peopleValues[0],       // Người làm (empty for dropdown selection)
                         invoice.paymentStatus,  // Trạng thái thanh toán
-                        ''                      // Ghi chú (empty)
+                        '',                     // Ghi chú (empty)
+                        this.config.delayValues[0],       // Lần Delay (default to first value)
+                        ''                      // Ngày trả mới (empty)
                     ]);
                 }
             });
@@ -348,7 +352,7 @@ class workMigrationJob {
                 // STEP 2: Fill the newly inserted rows with data
                 await sheets.spreadsheets.values.update({
                     spreadsheetId: this.config.spreadsheet.id,
-                    range: `${this.config.spreadsheet.sheetName}!A2:J${1 + numRows}`, // Start at row 2 (after header)
+                    range: `${this.config.spreadsheet.sheetName}!A2:L${1 + numRows}`, // Start at row 2 (after header)
                     valueInputOption: 'USER_ENTERED', // Handle dates properly
                     requestBody: {
                         values: rows
@@ -372,11 +376,11 @@ class workMigrationJob {
                                         startRowIndex: startRow - 1,  // 0-indexed
                                         endRowIndex: endRow,
                                         startColumnIndex: 0,
-                                        endColumnIndex: 10
+                                        endColumnIndex: 12 // Updated for 12 columns
                                     },
                                     fields: "userEnteredFormat",
                                     rows: Array(endRow - startRow + 1).fill({
-                                        values: Array(10).fill({
+                                        values: Array(12).fill({ // Updated for 12 columns
                                             userEnteredFormat: {}  // Empty format = clear formatting
                                         })
                                     })
@@ -390,7 +394,7 @@ class workMigrationJob {
                                         startRowIndex: startRow - 1,  // 0-indexed
                                         endRowIndex: endRow,
                                         startColumnIndex: 0,
-                                        endColumnIndex: 10
+                                        endColumnIndex: 12 // Updated for 12 columns
                                     },
                                     cell: {
                                         userEnteredFormat: {
@@ -504,6 +508,50 @@ class workMigrationJob {
                                     },
                                     fields: "userEnteredFormat.backgroundColor,userEnteredFormat.horizontalAlignment"
                                 }
+                            },
+                            {
+                                // Style "Lần Delay" column (K - index 10) to look like a dropdown
+                                repeatCell: {
+                                    range: {
+                                        sheetId: sheetId,
+                                        startRowIndex: startRow - 1,
+                                        endRowIndex: endRow,
+                                        startColumnIndex: 10,
+                                        endColumnIndex: 11
+                                    },
+                                    cell: {
+                                        userEnteredFormat: {
+                                            // Add subtle formatting to indicate it's a dropdown
+                                            backgroundColor: {
+                                                red: 0.95,
+                                                green: 0.95,
+                                                blue: 0.95
+                                            },
+                                            horizontalAlignment: "LEFT"
+                                        }
+                                    },
+                                    fields: "userEnteredFormat.backgroundColor,userEnteredFormat.horizontalAlignment"
+                                }
+                            },
+                            {
+                                // CRITICAL: Set "Ngày trả mới" column (L - index 11) as RAW TEXT
+                                repeatCell: {
+                                    range: {
+                                        sheetId: sheetId,
+                                        startRowIndex: startRow - 1,
+                                        endRowIndex: endRow,
+                                        startColumnIndex: 11,
+                                        endColumnIndex: 12
+                                    },
+                                    cell: {
+                                        userEnteredFormat: {
+                                            numberFormat: {
+                                                type: "TEXT"  // Force TEXT format to prevent date conversion
+                                            }
+                                        }
+                                    },
+                                    fields: "userEnteredFormat.numberFormat"
+                                }
                             }
                         ]
                     }
@@ -511,7 +559,7 @@ class workMigrationJob {
 
                 this.log(`Applied formatting to rows ${startRow}-${endRow}`);
 
-                // Set up dropdowns for Status (column F) and People (column H)
+                // Set up dropdowns for Status (column F), People (column H) and Delay (column K)
                 await this.setupDropdowns(sheets, this.config.spreadsheet.id, sheetId);
                 this.log(`Applied dropdown to all rows`);
             }
@@ -522,7 +570,7 @@ class workMigrationJob {
     }
 
     /**
-     * Setup dropdowns for status and people columns
+     * Setup dropdowns for status, people, and delay columns
      *
      * @param {Object} sheets - Google Sheets API instance
      * @param {string} spreadsheetId - Google Sheet ID
@@ -571,6 +619,28 @@ class workMigrationJob {
                         strict: true,
                         showCustomUi: true,
                         inputMessage: "Chọn người thực hiện"
+                    }
+                }
+            };
+
+            // Create dropdown request for Delay column (K - index 10)
+            const delayDropdownRequest = {
+                setDataValidation: {
+                    range: {
+                        sheetId: sheetId,
+                        startRowIndex: 1,  // Start from row after header
+                        endRowIndex: 1000, // Set a reasonable limit
+                        startColumnIndex: 10, // Column K (0-indexed)
+                        endColumnIndex: 11
+                    },
+                    rule: {
+                        condition: {
+                            type: "ONE_OF_LIST",
+                            values: this.config.delayValues.map(value => ({ userEnteredValue: value }))
+                        },
+                        strict: true,
+                        showCustomUi: true,
+                        inputMessage: "Chọn lần delay"
                     }
                 }
             };
@@ -651,6 +721,44 @@ class workMigrationJob {
                 };
             });
 
+            // Create color formatting requests for each delay level
+            const delayColorRequests = Object.entries(this.config.delayColors).map(([delay, [r, g, b]]) => {
+                return {
+                    addConditionalFormatRule: {
+                        rule: {
+                            ranges: [{
+                                sheetId: sheetId,
+                                startRowIndex: 1,
+                                endRowIndex: 1000,
+                                startColumnIndex: 10,
+                                endColumnIndex: 11
+                            }],
+                            booleanRule: {
+                                condition: {
+                                    type: "TEXT_EQ",
+                                    values: [{ userEnteredValue: delay }]
+                                },
+                                format: {
+                                    backgroundColor: {
+                                        red: r / 255,
+                                        green: g / 255,
+                                        blue: b / 255
+                                    },
+                                    textFormat: {
+                                        foregroundColor: {
+                                            red: (r < 128 && g < 128 && b < 128) ? 1 : 0,
+                                            green: (r < 128 && g < 128 && b < 128) ? 1 : 0,
+                                            blue: (r < 128 && g < 128 && b < 128) ? 1 : 0
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        index: 0
+                    }
+                };
+            });
+
             // Apply all rules (dropdowns and colors)
             await sheets.spreadsheets.batchUpdate({
                 spreadsheetId: spreadsheetId,
@@ -658,23 +766,26 @@ class workMigrationJob {
                     requests: [
                         statusDropdownRequest,
                         peopleDropdownRequest,
+                        delayDropdownRequest,
                         ...colorRequests,
-                        ...peopleColorRequests
+                        ...peopleColorRequests,
+                        ...delayColorRequests
                     ]
                 }
             });
 
-            // Set default values for empty cells in the status and people columns
+            // Set default values for empty cells in the status, people, and delay columns
             // First, get all existing data
             const response = await sheets.spreadsheets.values.get({
                 spreadsheetId: spreadsheetId,
-                range: `${this.config.spreadsheet.sheetName}!A:J`
+                range: `${this.config.spreadsheet.sheetName}!A:L`
             });
 
             if (response.data.values && response.data.values.length > 1) {
                 const rows = response.data.values;
                 const defaultStatusUpdates = [];
                 const defaultPeopleUpdates = [];
+                const defaultDelayUpdates = [];
 
                 // Start from row 2 (index 1) to skip the header
                 for (let i = 1; i < rows.length; i++) {
@@ -694,6 +805,14 @@ class workMigrationJob {
                             defaultPeopleUpdates.push({
                                 range: `${this.config.spreadsheet.sheetName}!H${i + 1}`,
                                 values: [[this.config.peopleValues[0]]]
+                            });
+                        }
+
+                        // Check if Delay column (K, index 10) is empty and should have a default
+                        if (!row[10] || row[10] === '') {
+                            defaultDelayUpdates.push({
+                                range: `${this.config.spreadsheet.sheetName}!K${i + 1}`,
+                                values: [[this.config.delayValues[0]]]
                             });
                         }
                     }
@@ -716,6 +835,16 @@ class workMigrationJob {
                         requestBody: {
                             valueInputOption: 'USER_ENTERED',
                             data: defaultPeopleUpdates
+                        }
+                    });
+                }
+
+                if (defaultDelayUpdates.length > 0) {
+                    await sheets.spreadsheets.values.batchUpdate({
+                        spreadsheetId: spreadsheetId,
+                        requestBody: {
+                            valueInputOption: 'USER_ENTERED',
+                            data: defaultDelayUpdates
                         }
                     });
                 }

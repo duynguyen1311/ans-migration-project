@@ -11,7 +11,8 @@ module.exports = {
   spreadsheet: {
     id: process.env.SPREADSHEET_ID,
     sheetName: process.env.SHEET_NAME,
-    headers: ['Hoá đơn', 'Ngày nhận', 'Ngày trả', 'Tên đồ dùng', 'Công việc', 'Trạng thái', 'Thời gian', 'Người làm', 'Trạng thái thanh toán', 'Ghi chú']
+    headers: ['Hoá đơn', 'Ngày nhận', 'Ngày trả', 'Tên đồ dùng', 'Công việc', 'Trạng thái', 'Thời gian',
+      'Người làm', 'Trạng thái thanh toán', 'Ghi chú', 'Lần Delay', 'Ngày trả mới']
   },
 
   // Telegram Bot Configuration
@@ -26,7 +27,15 @@ module.exports = {
 
   // Status dropdown values
   statusValues: ["Chưa làm", "Đang làm", "Phát sinh", "Hoàn thành", "Đóng đơn", "Huỷ đơn"],
-
+  // Status colors (RGB values)
+  statusColors: {
+    "Chưa làm": [230, 230, 230],     // Grey
+    "Đang làm": [66, 133, 244],      // Blue
+    "Phát sinh": [234, 67, 53],      // Red
+    "Hoàn thành": [251, 188, 4],     // Yellow
+    "Đóng đơn": [52, 168, 83],       // Green
+    "Huỷ đơn": [156, 39, 176]        // Purple
+  },
   // People dropdown values with associated colors
   peopleValues: ['Chọn người làm', 'Minh', 'Huy', 'Thắng', 'Vườn Đào', 'Hà Nội', 'Nam Định'],
 
@@ -39,14 +48,10 @@ module.exports = {
     "Hà Nội": [255, 183, 77],    // Light orange/amber
     "Nam Định": [186, 104, 200]   // Light purple
   },
-
-  // Status colors (RGB values)
-  statusColors: {
-    "Chưa làm": [230, 230, 230],     // Grey
-    "Đang làm": [66, 133, 244],      // Blue
-    "Phát sinh": [234, 67, 53],      // Red
-    "Hoàn thành": [251, 188, 4],     // Yellow
-    "Đóng đơn": [52, 168, 83],       // Green
-    "Huỷ đơn": [156, 39, 176]        // Purple
-  }
+  delayValues: ["Chọn","Delay lần 1", "Delay lần 2", "Delay lần 3"],
+  delayColors: {
+    "Delay lần 1" : [66, 133, 244],
+    "Delay lần 2" : [251, 188, 4],
+    "Delay lần 3" : [234, 67, 53]
+  },
 };
