@@ -1,9 +1,22 @@
 const workMigrationJob = require("./job/workMigrationJob");
+const dataMigrationJob = require("./job/dataMigrationJob");
 const DailyReportJob = require("./job/dailyReportJob");
 const config = require('./config');
 const TelegramBot = require("./service/telegram-bot-service");
 
 class Main {
+    async runDataMigrationJob() {
+        const dataMigration = new dataMigrationJob(config);
+        //customer
+        await dataMigration.main('customer');
+        //goods
+        await dataMigration.main('goods');
+        //services
+        await dataMigration.main('services');
+        //invoices
+        //await dataMigration.main('invoices');
+    }
+
     async runWorkMigrationJob() {
         const workMigration = new workMigrationJob(config);
         await workMigration.main();
@@ -55,3 +68,5 @@ const main = new Main();
 
 /*Test telegram bot*/
 //main.testTeleBot();
+
+main.runDataMigrationJob();
