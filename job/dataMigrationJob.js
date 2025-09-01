@@ -2,6 +2,7 @@ const axios = require("axios");
 const {getKiotVietAccessToken} = require("../service/get-access-token");
 const {log, logError} = require("../service/log-service");
 const { dbService } = require('../service/dbConnection-service');
+const seedCategory = require('../mock-data/category.json');
 class dataMigrationJob {
     constructor(config, options = {}) {
         this.config = config;
@@ -19,6 +20,8 @@ class dataMigrationJob {
 
         const goodsType = 2;
         const serviceType = 3;
+
+        await this.seedCategories();
 
         const accessToken = await this.getKiotVietAccessToken();
         this.log('✓ Access token obtained');
@@ -42,6 +45,31 @@ class dataMigrationJob {
         }
     }
 
+    async seedCategories() {
+        try {
+            // Check if item_category table is empty
+            const query = 'SELECT COUNT(*) as count FROM item_category';
+            const result = await dbService.get(query);
+            const categoryCount = parseInt(result[0].count);
+
+            if (categoryCount === 0) {
+                this.log('---------Start seeding categories--------');
+
+                // Loop through seedCategory and insert each one
+                for (const category of seedCategory) {
+                    await this.insertCategory(category);
+                }
+
+                this.log(`✓ Seeded ${seedCategory.length} categories successfully`);
+            } else {
+                this.log(`✓ Categories already exist (${categoryCount} found), skipping seed`);
+                return;
+            }
+        } catch (error) {
+            this.logError('Error seeding categories:', error.message);
+            throw error;
+        }
+    }
     async fetchCustomer(accessToken) {
         try {
             this.log(`---------Start fetching customers--------`);
@@ -115,6 +143,7 @@ class dataMigrationJob {
             throw error;
         }
     }
+
     async fetchInvoices(accessToken) {
         try {
             this.log(`---------Start fetching invoices--------`);
@@ -208,6 +237,18 @@ class dataMigrationJob {
             return insertedCustomer;
         } catch (error) {
             console.error(`Error inserting customer ${customerData.code}: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async insertCategory(categoryData) {
+        try {
+
+            const insertedCategory = await dbService.insert('item_category', categoryData);
+            this.log(`✓ Inserted category: ${categoryData.name}`);
+            return insertedCategory;
+        } catch (error) {
+            console.error(`Error inserting category ${categoryData.name}: ${error.message}`);
             throw error;
         }
     }

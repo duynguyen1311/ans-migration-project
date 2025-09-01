@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Phí ưu tiên"
+  },
+  {
+    "name": "Dịch vụ bảo vệ"
+  },
+  {
+    "name": "Dịch vụ phục hồi"
+  },
+  {
+    "name": "Dịch vụ vệ sinh"
+  },
+  {
+    "name": "Nhóm không tính thưởng"
+  },
+  {
+    "name": "Dịch vụ vệ sinh túi",
+    "description": "Danh mục con của Dịch vụ vệ sinh"
+  },
+  {
+    "name": "Dung dịch chăm sóc"
+  },
+  {
+    "name": "Thiết bi chăm sóc"
+  }
+]
