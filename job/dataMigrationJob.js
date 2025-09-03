@@ -3,6 +3,7 @@ const {getKiotVietAccessToken} = require("../service/get-access-token");
 const {log, logError} = require("../service/log-service");
 const { dbService } = require('../service/dbConnection-service');
 const seedCategory = require('../mock-data/category.json');
+const seedSetting = require('../mock-data/setting.json');
 class dataMigrationJob {
     constructor(config, options = {}) {
         this.config = config;
@@ -22,6 +23,7 @@ class dataMigrationJob {
         const serviceType = 3;
 
         await this.seedCategories();
+        await this.seedSetting();
 
         const accessToken = await this.getKiotVietAccessToken();
         this.log('✓ Access token obtained');
@@ -70,6 +72,33 @@ class dataMigrationJob {
             throw error;
         }
     }
+
+    async seedSetting() {
+        try {
+            // Check if item_category table is empty
+            const query = 'SELECT COUNT(*) as count FROM settings';
+            const result = await dbService.get(query);
+            const settingsCount = parseInt(result[0].count);
+
+            if (settingsCount === 0) {
+                this.log('---------Start seeding settings--------');
+
+                // Loop through seedCategory and insert each one
+                for (const setting of seedSetting) {
+                    await this.insertSettings(setting);
+                }
+
+                this.log(`✓ Seeded ${seedSetting.length} settings successfully`);
+            } else {
+                this.log(`✓ Settings already exist (${settingsCount} found), skipping seed`);
+                return;
+            }
+        } catch (error) {
+            this.logError('Error seeding settings:', error.message);
+            throw error;
+        }
+    }
+
     async fetchCustomer(accessToken) {
         try {
             this.log(`---------Start fetching customers--------`);
@@ -249,6 +278,17 @@ class dataMigrationJob {
             return insertedCategory;
         } catch (error) {
             console.error(`Error inserting category ${categoryData.name}: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async insertSettings(setting) {
+        try {
+            const insertedSetting = await dbService.insert('settings', setting);
+            this.log(`✓ Inserted category: ${setting.type}`);
+            return insertedSetting;
+        } catch (error) {
+            console.error(`Error inserting setting for ${setting.type}: ${error.message}`);
             throw error;
         }
     }
