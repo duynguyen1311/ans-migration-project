@@ -1,0 +1,20 @@
+[
+  {
+    "id": "3e508baf-2a7a-46f6-83b2-2665967aa223",
+    "name": "admin",
+    "description": "Administrator with full system access",
+    "is_active": true
+  },
+  {
+    "id": "c44e3bf4-1e6b-4d41-bc42-08e00431bef5",
+    "name": "staff",
+    "description": "Staff member with limited access",
+    "is_active": true
+  },
+  {
+    "id": "5b13d390-f782-438a-8656-d40388379c14",
+    "name": "cashier",
+    "description": "Cashier member with limited access",
+    "is_active": true
+  }
+]

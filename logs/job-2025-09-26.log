@@ -1,0 +1,82 @@
+[14:34:14 26/9/2025] ✓ Database connected successfully
+[14:34:14 26/9/2025] ✓ Database connected successfully
+[14:34:14 26/9/2025] ---------Start seeding roles--------
+[14:34:14 26/9/2025] ✓ Role already exists, skipping: admin
+[14:34:14 26/9/2025] ✓ Role already exists, skipping: staff
+[14:34:14 26/9/2025] ✓ Inserted role: cashier
+[14:34:14 26/9/2025] ✓ Roles seeding completed - Inserted: 1, Skipped: 2
+[14:34:14 26/9/2025] ✓ Users already exist (2 found), skipping seed
+[14:34:14 26/9/2025] ✓ Categories already exist (8 found), skipping seed
+[14:34:14 26/9/2025] ✓ Settings already exist (2 found), skipping seed
+[14:34:14 26/9/2025] ✓ Transaction categories already exist (3 found), skipping seed
+[14:34:14 26/9/2025] Requesting KiotViet access token...
+[14:34:14 26/9/2025] ✓ KiotViet access token obtained successfully
+[14:34:14 26/9/2025] ✓ Access token obtained
+[14:34:56 26/9/2025] ✓ Database connected successfully
+[14:34:56 26/9/2025] ✓ Database connected successfully
+[14:34:56 26/9/2025] ---------Start seeding roles--------
+[14:34:56 26/9/2025] ✓ Role already exists, skipping: admin
+[14:34:56 26/9/2025] ✓ Role already exists, skipping: staff
+[14:34:56 26/9/2025] ✓ Inserted role: cashier
+[14:34:56 26/9/2025] ✓ Roles seeding completed - Inserted: 1, Skipped: 2
+[14:34:56 26/9/2025] ✓ Users already exist (5 found), skipping seed
+[14:34:57 26/9/2025] ✓ Categories already exist (8 found), skipping seed
+[14:34:57 26/9/2025] ✓ Settings already exist (2 found), skipping seed
+[14:34:57 26/9/2025] ---------Start seeding transaction categories--------
+[14:34:57 26/9/2025] ✓ Inserted transaction category: Thu tiền khách trả (income)
+[14:34:57 26/9/2025] ERROR: Insert failed: invalid input syntax for type uuid: "4f619cbf-3b8b-57g7-94c3-3776a78bb334"
+[14:34:57 26/9/2025] ERROR: Error seeding transaction categories:
+[14:36:34 26/9/2025] ✓ Database connected successfully
+[14:36:34 26/9/2025] ✓ Database connected successfully
+[14:36:34 26/9/2025] ---------Start seeding roles--------
+[14:36:34 26/9/2025] ✓ Role already exists, skipping: admin
+[14:36:34 26/9/2025] ✓ Role already exists, skipping: staff
+[14:36:34 26/9/2025] ✓ Role already exists, skipping: cashier
+[14:36:34 26/9/2025] ✓ Roles seeding completed - Inserted: 0, Skipped: 3
+[14:36:34 26/9/2025] ✓ Users already exist (5 found), skipping seed
+[14:36:34 26/9/2025] ✓ Categories already exist (8 found), skipping seed
+[14:36:34 26/9/2025] ✓ Settings already exist (2 found), skipping seed
+[14:36:34 26/9/2025] ✓ Transaction categories already exist (1 found), skipping seed
+[14:36:34 26/9/2025] Requesting KiotViet access token...
+[14:36:34 26/9/2025] ✓ KiotViet access token obtained successfully
+[14:36:34 26/9/2025] ✓ Access token obtained
+[14:38:17 26/9/2025] ✓ Database connected successfully
+[14:38:17 26/9/2025] ✓ Database connected successfully
+[14:38:17 26/9/2025] ---------Start seeding roles--------
+[14:38:17 26/9/2025] ✓ Role already exists, skipping: admin
+[14:38:17 26/9/2025] ✓ Role already exists, skipping: staff
+[14:38:17 26/9/2025] ✓ Role already exists, skipping: cashier
+[14:38:17 26/9/2025] ✓ Roles seeding completed - Inserted: 0, Skipped: 3
+[14:38:17 26/9/2025] ✓ Users already exist (5 found), skipping seed
+[14:38:17 26/9/2025] ✓ Categories already exist (8 found), skipping seed
+[14:38:17 26/9/2025] ✓ Settings already exist (2 found), skipping seed
+[14:38:22 26/9/2025] ---------Start seeding transaction categories--------
+[14:38:30 26/9/2025] ✓ Inserted transaction category: Thu tiền khách trả (income)
+[14:38:32 26/9/2025] ✓ Inserted transaction category: Chi tiền điện (expense)
+[14:38:33 26/9/2025] ✓ Inserted transaction category: Chi tiền nước (expense)
+[14:38:35 26/9/2025] ✓ Inserted transaction category: Chi tiền nhà (expense)
+[14:38:37 26/9/2025] ✓ Inserted transaction category: Hoàn tiền cho khách (expense)
+[14:38:38 26/9/2025] ✓ Seeded 5 transaction categories successfully
+[14:38:38 26/9/2025] Requesting KiotViet access token...
+[14:38:38 26/9/2025] ✓ KiotViet access token obtained successfully
+[14:38:38 26/9/2025] ✓ Access token obtained
+[15:00:02 26/9/2025] ✓ Database connected successfully
+[15:00:02 26/9/2025] ✓ Database connected successfully
+[15:00:02 26/9/2025] ---------Start seeding roles--------
+[15:00:02 26/9/2025] ✓ Role already exists, skipping: admin
+[15:00:02 26/9/2025] ✓ Role already exists, skipping: staff
+[15:00:02 26/9/2025] ✓ Role already exists, skipping: cashier
+[15:00:02 26/9/2025] ✓ Roles seeding completed - Inserted: 0, Skipped: 3
+[15:00:02 26/9/2025] ✓ Users already exist (2 found), skipping seed
+[15:00:02 26/9/2025] ✓ Categories already exist (8 found), skipping seed
+[15:00:02 26/9/2025] ✓ Settings already exist (2 found), skipping seed
+[15:00:02 26/9/2025] ---------Start seeding transaction categories--------
+[15:00:02 26/9/2025] ✓ Inserted transaction category: Thu tiền khách trả (income)
+[15:00:03 26/9/2025] ✓ Inserted transaction category: Chi tiền điện (expense)
+[15:00:03 26/9/2025] ✓ Inserted transaction category: Chi tiền nước (expense)
+[15:00:03 26/9/2025] ✓ Inserted transaction category: Chi tiền nhà (expense)
+[15:00:03 26/9/2025] ✓ Inserted transaction category: Hoàn tiền cho khách (expense)
+[15:00:03 26/9/2025] ✓ Seeded 5 transaction categories successfully
+[15:00:03 26/9/2025] Requesting KiotViet access token...
+[15:00:03 26/9/2025] ✓ KiotViet access token obtained successfully
+[15:00:03 26/9/2025] ✓ Access token obtained

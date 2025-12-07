@@ -1,0 +1,12 @@
+[
+  {
+    "id": "4255acf5-c07e-4e7e-b9dd-425e67b34979",
+    "username": "admin",
+    "password_hash": "$2a$12$Aco1ax3RKHejItBLGNR7sOwhI3CY/V3fLC5HZH5tbPzMAKJhMALg.",
+    "email": "annhung.brandspa@gmail.com",
+    "phone_number": "0336000988",
+    "full_name": "An Nhung Spa",
+    "is_active": true,
+    "role_id": "3e508baf-2a7a-46f6-83b2-2665967aa223"
+  }
+]

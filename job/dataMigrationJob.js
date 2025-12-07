@@ -4,6 +4,9 @@ const {log, logError} = require("../service/log-service");
 const { dbService } = require('../service/dbConnection-service');
 const seedCategory = require('../mock-data/category.json');
 const seedSetting = require('../mock-data/setting.json');
+const seedRoles = require('../mock-data/role.json');
+const seedUsers = require('../mock-data/user.json');
+const seedTransactionCategory = require('../mock-data/transactio-category.json');
 class dataMigrationJob {
     constructor(config, options = {}) {
         this.config = config;
@@ -22,8 +25,13 @@ class dataMigrationJob {
         const goodsType = 2;
         const serviceType = 3;
 
+        await this.seedRoles();
+
+        await this.seedUsers();
+
         await this.seedCategories();
         await this.seedSetting();
+        await this.seedTransactionCategories();
 
         const accessToken = await this.getKiotVietAccessToken();
         this.log('✓ Access token obtained');
@@ -95,6 +103,131 @@ class dataMigrationJob {
             }
         } catch (error) {
             this.logError('Error seeding settings:', error.message);
+            throw error;
+        }
+    }
+
+    // Add these methods to your dataMigrationJob class
+
+    async seedRoles() {
+        try {
+            this.log('---------Start seeding roles--------');
+
+            let insertedCount = 0;
+            let skippedCount = 0;
+
+            // Loop through seedRoles and check each one
+            for (const role of seedRoles) {
+                const existingRole = await this.getRoleByName(role.name);
+
+                if (!existingRole) {
+                    await this.insertRole(role);
+                    insertedCount++;
+                } else {
+                    this.log(`✓ Role already exists, skipping: ${role.name}`);
+                    skippedCount++;
+                }
+            }
+
+            this.log(`✓ Roles seeding completed - Inserted: ${insertedCount}, Skipped: ${skippedCount}`);
+        } catch (error) {
+            this.logError('Error seeding roles:', error.message);
+            throw error;
+        }
+    }
+
+    async getRoleByName(roleName) {
+        try {
+            const query = 'SELECT * FROM role WHERE name = $1 LIMIT 1';
+            const result = await dbService.get(query, [roleName]);
+            return result.length > 0 ? result[0] : null;
+        } catch (error) {
+            console.error(`Error getting role by name: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async seedUsers() {
+        try {
+            // Check if user table is empty
+            const query = 'SELECT COUNT(*) as count FROM "user"';
+            const result = await dbService.get(query);
+            const userCount = parseInt(result[0].count);
+
+            if (userCount === 0) {
+                this.log('---------Start seeding users--------');
+
+                // Loop through seedUsers and insert each one
+                for (const user of seedUsers) {
+                    await this.insertUser(user);
+                }
+
+                this.log(`✓ Seeded ${seedUsers.length} users successfully`);
+            } else {
+                this.log(`✓ Users already exist (${userCount} found), skipping seed`);
+                return;
+            }
+        } catch (error) {
+            this.logError('Error seeding users:', error.message);
+            throw error;
+        }
+    }
+
+    async seedTransactionCategories() {
+        try {
+            // Check if transaction_category table is empty
+            const query = 'SELECT COUNT(*) as count FROM transaction_category';
+            const result = await dbService.get(query);
+            const categoryCount = parseInt(result[0].count);
+
+            if (categoryCount === 0) {
+                this.log('---------Start seeding transaction categories--------');
+
+                // Loop through seedTransactionCategories and insert each one
+                for (const category of seedTransactionCategory) {
+                    await this.insertTransactionCategory(category);
+                }
+
+                this.log(`✓ Seeded ${seedTransactionCategory.length} transaction categories successfully`);
+            } else {
+                this.log(`✓ Transaction categories already exist (${categoryCount} found), skipping seed`);
+                return;
+            }
+        } catch (error) {
+            this.logError('Error seeding transaction categories:', error.message);
+            throw error;
+        }
+    }
+
+    async insertTransactionCategory(categoryData) {
+        try {
+            const insertedCategory = await dbService.insert('transaction_category', categoryData);
+            this.log(`✓ Inserted transaction category: ${categoryData.name} (${categoryData.type})`);
+            return insertedCategory;
+        } catch (error) {
+            console.error(`Error inserting transaction category ${categoryData.name}: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async insertRole(roleData) {
+        try {
+            const insertedRole = await dbService.insert('role', roleData);
+            this.log(`✓ Inserted role: ${roleData.name}`);
+            return insertedRole;
+        } catch (error) {
+            console.error(`Error inserting role ${roleData.name}: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async insertUser(userData) {
+        try {
+            const insertedUser = await dbService.insert('"user"', userData);
+            this.log(`✓ Inserted user: ${userData.full_name} (${userData.username})`);
+            return insertedUser;
+        } catch (error) {
+            console.error(`Error inserting user ${userData.username}: ${error.message}`);
             throw error;
         }
     }

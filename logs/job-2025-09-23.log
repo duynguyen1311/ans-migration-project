@@ -1,0 +1,21 @@
+[23:51:44 23/9/2025] ✓ Database connected successfully
+[23:51:44 23/9/2025] ✓ Database connected successfully
+[23:51:44 23/9/2025] ✓ Roles already exist (2 found), skipping seed
+[23:51:44 23/9/2025] ✓ Users already exist (2 found), skipping seed
+[23:51:44 23/9/2025] ✓ Categories already exist (8 found), skipping seed
+[23:51:44 23/9/2025] ✓ Settings already exist (1 found), skipping seed
+[23:51:44 23/9/2025] Requesting KiotViet access token...
+[23:51:44 23/9/2025] ✓ KiotViet access token obtained successfully
+[23:51:44 23/9/2025] ✓ Access token obtained
+[23:52:22 23/9/2025] ✓ Database connected successfully
+[23:52:22 23/9/2025] ✓ Database connected successfully
+[23:52:22 23/9/2025] ✓ Roles already exist (2 found), skipping seed
+[23:52:22 23/9/2025] ✓ Users already exist (2 found), skipping seed
+[23:52:22 23/9/2025] ✓ Categories already exist (8 found), skipping seed
+[23:52:22 23/9/2025] ---------Start seeding settings--------
+[23:52:22 23/9/2025] ✓ Inserted category: zalo
+[23:52:22 23/9/2025] ✓ Inserted category: timekeeping
+[23:52:22 23/9/2025] ✓ Seeded 2 settings successfully
+[23:52:22 23/9/2025] Requesting KiotViet access token...
+[23:52:23 23/9/2025] ✓ KiotViet access token obtained successfully
+[23:52:23 23/9/2025] ✓ Access token obtained

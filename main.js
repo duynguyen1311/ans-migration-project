@@ -7,12 +7,16 @@ const TelegramBot = require("./service/telegram-bot-service");
 class Main {
     async runDataMigrationJob() {
         const dataMigration = new dataMigrationJob(config);
+
+        //seed data only
+        //await dataMigration.main();
+
         //customer
         await dataMigration.main('customer');
         //goods
-        await dataMigration.main('goods');
+        //await dataMigration.main('goods');
         //services
-        await dataMigration.main('services');
+        //await dataMigration.main('services');
         //invoices
         //await dataMigration.main('invoices');
     }

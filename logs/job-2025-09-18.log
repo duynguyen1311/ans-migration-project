@@ -1,0 +1,20 @@
+[11:12:15 18/9/2025] ✓ Database connected successfully
+[11:12:15 18/9/2025] ✓ Database connected successfully
+[11:12:15 18/9/2025] ✓ Roles already exist (2 found), skipping seed
+[11:12:15 18/9/2025] ---------Start seeding users--------
+[11:12:15 18/9/2025] ERROR: Insert failed: insert or update on table "user" violates foreign key constraint "FK_fb2e442d14add3cefbdf33c4561"
+[11:12:15 18/9/2025] ERROR: Error seeding users:
+[11:13:03 18/9/2025] ✓ Database connected successfully
+[11:13:03 18/9/2025] ✓ Database connected successfully
+[11:13:03 18/9/2025] ---------Start seeding roles--------
+[11:13:03 18/9/2025] ✓ Inserted role: admin
+[11:13:03 18/9/2025] ✓ Inserted role: staff
+[11:13:03 18/9/2025] ✓ Seeded 2 roles successfully
+[11:13:03 18/9/2025] ---------Start seeding users--------
+[11:13:03 18/9/2025] ✓ Inserted user: An Nhung Spa (admin)
+[11:13:03 18/9/2025] ✓ Seeded 1 users successfully
+[11:13:03 18/9/2025] ✓ Categories already exist (8 found), skipping seed
+[11:13:03 18/9/2025] ✓ Settings already exist (1 found), skipping seed
+[11:13:03 18/9/2025] Requesting KiotViet access token...
+[11:13:04 18/9/2025] ✓ KiotViet access token obtained successfully
+[11:13:04 18/9/2025] ✓ Access token obtained

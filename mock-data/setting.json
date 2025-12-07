@@ -2,5 +2,9 @@
   {
     "type": "zalo",
     "metadata" : {"templateId": ["444594", "445470", "445037"], "isSendAllowed": false}
+  },
+  {
+    "type": "timekeeping",
+    "metadata" : {"hourPerDay": {"hour": 8, "minutes": 0}}
   }
 ]

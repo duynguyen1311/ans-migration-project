@@ -1,0 +1,25 @@
+[22:07:02 15/9/2025] ✓ Database connected successfully
+[22:07:02 15/9/2025] ✓ Database connected successfully
+[22:07:02 15/9/2025] ✓ Roles already exist (2 found), skipping seed
+[22:07:02 15/9/2025] ---------Start seeding users--------
+[22:07:02 15/9/2025] ERROR: Insert failed: syntax error at or near "user"
+[22:07:02 15/9/2025] ERROR: Error seeding users:
+[22:07:40 15/9/2025] ✓ Database connected successfully
+[22:07:40 15/9/2025] ✓ Database connected successfully
+[22:07:40 15/9/2025] ✓ Roles already exist (2 found), skipping seed
+[22:07:41 15/9/2025] ---------Start seeding users--------
+[22:07:43 15/9/2025] ERROR: Insert failed: syntax error at or near "user"
+[22:09:01 15/9/2025] ✓ Database connected successfully
+[22:09:01 15/9/2025] ✓ Database connected successfully
+[22:09:01 15/9/2025] ---------Start seeding roles--------
+[22:09:01 15/9/2025] ✓ Inserted role: admin
+[22:09:01 15/9/2025] ✓ Inserted role: staff
+[22:09:01 15/9/2025] ✓ Seeded 2 roles successfully
+[22:09:01 15/9/2025] ---------Start seeding users--------
+[22:09:01 15/9/2025] ✓ Inserted user: An Nhung Spa (admin)
+[22:09:01 15/9/2025] ✓ Seeded 1 users successfully
+[22:09:01 15/9/2025] ✓ Categories already exist (8 found), skipping seed
+[22:09:01 15/9/2025] ✓ Settings already exist (2 found), skipping seed
+[22:09:01 15/9/2025] Requesting KiotViet access token...
+[22:09:02 15/9/2025] ✓ KiotViet access token obtained successfully
+[22:09:02 15/9/2025] ✓ Access token obtained

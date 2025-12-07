@@ -1,0 +1,362 @@
+[
+  {
+    "id": "1af6b933-d468-4e78-93dd-a0e80667ce25",
+    "name": "Ấn phẩm",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "9c65c78d-a0ac-4fca-9444-440f57fc6d5c",
+    "name": "Ban thần tài",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "f8fd2352-0576-4278-92a5-f33ce352ffd4",
+    "name": "Bảo trì + Bảo dưỡng + Thi công tòa nhà",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "58195cc1-3912-46bf-bb30-c4940c0a871c",
+    "name": "Bồi hoàn lương",
+    "description": "Cộng thêm lương thiếu cho nhân viên",
+    "type": "expense"
+  },
+  {
+    "id": "80d6027f-95b5-4f81-ab13-8d80db283c01",
+    "name": "Cước viễn thông",
+    "description": "Mạng Internet, Cước điện thoại",
+    "type": "expense"
+  },
+  {
+    "id": "5a454565-d1b4-4599-a69c-0be1ebf20e73",
+    "name": "Chi cổ tức năm ",
+    "description": "Tổng kết vào ngày cuối của năm",
+    "type": "expense"
+  },
+  {
+    "id": "5770d5bc-037b-432d-9a53-7abf6834bf3b",
+    "name": "Chi đối tác Vườn đào",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "c17cf772-364f-49f5-9c12-ab2b678c68f7",
+    "name": "Chi lương nhân sự Remote",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "ca960eb2-53db-482f-91c8-0f707376427f",
+    "name": "Chi phí điện",
+    "description": "Chi phí điện của của cửa hàng, văn phòng, kho",
+    "type": "expense"
+  },
+  {
+    "id": "8cbe31be-a644-4dfb-bc66-76ea916cb9d8",
+    "name": "Chi phí hội nghị, sự kiện, công tác phí",
+    "description": "Tổ chức sự kiện, hội nghị, công tác phí đi lại",
+    "type": "expense"
+  },
+  {
+    "id": "687ad3b8-6398-42ca-97c3-f422625ce09e",
+    "name": "Chi phí nước",
+    "description": "Chi phí nước sinh hoạt, nước sạch",
+    "type": "expense"
+  },
+  {
+    "id": "b969b7f5-db2c-4d25-b5e5-5130f0dbd51b",
+    "name": "Chi phí nhân công",
+    "description": "Lương cơ bản, phụ cấp, bảo hiểm, chi phí nhân sự khác",
+    "type": "expense"
+  },
+  {
+    "id": "8367c91b-c0bd-4034-886c-1129b50782e5",
+    "name": "Chi phí phần mềm, dịch vụ quản trị, tư vấn",
+    "description": "Phí phần mềm, dịch vụ quản lý, tư vấn",
+    "type": "expense"
+  },
+  {
+    "id": "96e5b922-359b-4bd2-9597-042f45fa4d7a",
+    "name": "Chi phí quảng cáo",
+    "description": "Quảng cáo online, offline, marketing, thiết kế đồ họa",
+    "type": "expense"
+  },
+  {
+    "id": "a626048b-7550-4c12-b257-44befaaff751",
+    "name": "Chi phí sửa chữa, bảo dưỡng",
+    "description": "Sửa chữa thiết bị, máy móc, bảo dưỡng cơ sở vật chất",
+    "type": "expense"
+  },
+  {
+    "id": "b5b32395-4434-43f5-8ec9-5c42fa03b321",
+    "name": "Chi phí thuê kho bãi, mặt bằng kinh doanh",
+    "description": "Tiền thuê cửa hàng, kho, văn phòng, mặt bằng kinh doanh",
+    "type": "expense"
+  },
+  {
+    "id": "8f4c1cfb-0b45-4586-8698-dd7f7db6895d",
+    "name": "Chi phí văn phòng phẩm, công cụ dụng cụ",
+    "description": "Mua sắm văn phòng phẩm, dụng cụ làm việc, thiết bị văn phòng",
+    "type": "expense"
+  },
+  {
+    "id": "bda1a66d-de53-4014-952e-e6e994ba54ab",
+    "name": "Chi phí viễn thông",
+    "description": "Internet, điện thoại, truyền hình cáp, dịch vụ mạng",
+    "type": "expense"
+  },
+  {
+    "id": "085bfefb-c7d2-46ab-b7b2-52c3f7d37401",
+    "name": "Chi tổng tháng 2 để Reset cách tính (Từ tháng 3 đổ đi => Chi phí tháng nào tính tháng đó)",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "4b9f8790-90b8-47f6-8703-a18dd78bd514",
+    "name": "Chiết khấu cộng tác viên ngoài",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "ffaab517-530b-4fe9-bc45-917daf857744",
+    "name": "Chiết khấu nhân viên cửa hàng",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "22282a80-75a4-4161-a365-c450ad701e4c",
+    "name": "Chuyển đổi số (IT)",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "f2f8d70e-da2a-46da-84e9-3ca3d7fda128",
+    "name": "Dịch vụ khách hàng (Túi giấy,..)",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "ab27e567-de81-4c2e-9407-e8c938d3c01e",
+    "name": "Dịch vụ ngân hàng",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "a46e67b8-2ce4-4e29-9406-60c85bd65b5c",
+    "name": "Dung dịch bán lẻ",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "393fc409-52d9-4755-9037-28af20ddf4f2",
+    "name": "Dung dịch vệ sinh / phục hồi",
+    "description": "Các dung dịch dùng trong hoạt động của cửa hàng",
+    "type": "expense"
+  },
+  {
+    "id": "e40cdd07-b7c5-4b96-93e4-bbe556164358",
+    "name": "Đào tạo",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "e9b5624f-56d9-45dc-917b-06e6a5290171",
+    "name": "Đặt hàng/ Nguyên vật liệu",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "341a54e3-4547-4653-9d9c-e5813f5429ba",
+    "name": "Đền bù cho khách hàng",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "060ad094-1099-4c35-a305-ddd6e2cc0e66",
+    "name": "Đối tác sửa chửa giày/túi/ví",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "6e4d508e-fe0d-4ee0-8ab0-99c7213a2f92",
+    "name": "Hỗ trợ ship cho khách",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "2fa7c023-9edf-478c-a9a2-00557123ce49",
+    "name": "Hoàn tiền cho khách",
+    "description": "Hoàn tiền cho khách khi đơn bị huỷ",
+    "type": "expense"
+  },
+  {
+    "id": "17a7d71f-9502-411c-8914-3d6c4634afd5",
+    "name": "Lương nhân sự (Do huỳ nhầm bảng lương tháng 4)",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "a49e6714-db3a-4c57-a182-9f4840573c8a",
+    "name": "Marketing",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "7c965273-c7bc-4019-9fd6-fed8b7edd6c1",
+    "name": "Nộp thuế",
+    "description": "Thuế GTGT, thuế TNDN, thuế TNCN, các loại thuế khác",
+    "type": "expense"
+  },
+  {
+    "id": "c1df6ba2-68ba-4192-8d8b-db2f98a0f37a",
+    "name": "Phần mềm công nghệ",
+    "description": "Các phần mềm công nghệ được dùng cho việc phát triển cửa hàng (VD: Web, KiotViet, Hosting)",
+    "type": "expense"
+  },
+  {
+    "id": "c74c1494-8db6-4d89-b709-5f39b561d1d6",
+    "name": "Phòng cháy chữa cháy",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "84c20633-e49a-4b03-835e-1e0110520203",
+    "name": "Phúc lợi nhân sự",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "1c8ce99b-ef31-4a69-9674-05be57f870fb",
+    "name": "Sản phẩm bán lẻ",
+    "description": "Các sản phẩm nhập về để bán tại An Nhung Spa",
+    "type": "expense"
+  },
+  {
+    "id": "0d38417b-3315-4bd7-b721-1ccf52cbed57",
+    "name": "Ship gửi đối tác sửa chữa",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "629f6459-a727-4ecd-8c9c-85791f1d2ead",
+    "name": "Sinh nhật nhân viên",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "7ed434aa-3ea5-4b33-bc9d-d4c4305b9fa2",
+    "name": "Sổ quầy",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "d6a8e65a-0834-4e92-9c20-7952a8c3dc85",
+    "name": "Sự kiện khai trương",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "3de6ec95-5f72-4bd9-80ed-d1dcc1e46567",
+    "name": "Sự kiện nội bộ",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "a6b59a19-ce47-4f32-b5b2-3d77bfec3266",
+    "name": "Tài sản cố định",
+    "description": "Các chi phí liên quan đến vật dụng cố định và dùng lâu dài tại chi nhánh",
+    "type": "expense"
+  },
+  {
+    "id": "391a4548-81d2-4d16-8356-466fef2ff23a",
+    "name": "Tài sản khấu hao trong vận hành",
+    "description": "Những tài sản khấu hao không dành cho việc làm dịch vụ chăm sóc. (VD: Giấy ăn, cafe)",
+    "type": "expense"
+  },
+  {
+    "id": "62eb7931-b9dd-4cd9-91c9-d88f0a141644",
+    "name": "Thiết bị vệ sinh / phục hồi",
+    "description": "Các phần mềm và trang thiết bị hoạt động trong việc vận hành (VD: KiotViet, nguyên vật liệu vệ sinh)",
+    "type": "expense"
+  },
+  {
+    "id": "60d7ece2-0d3f-47c1-9737-74808f29ef9a",
+    "name": "Thuế",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "af85b8cc-651b-4386-96b8-3b238873d44a",
+    "name": "Thưởng lễ / tết nhân sự",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "f7033ede-fc33-480f-8913-624c4e219639",
+    "name": "Thưởng tết nhân viên",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "f049bbf8-e3c0-4af2-9d72-60bcefdba0fe",
+    "name": "Tiền điện nước hàng tháng",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "9fcd8dfa-030b-4755-888b-971f91cba16b",
+    "name": "Tiền nhà",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "3ac03ab2-d060-4098-bb9b-0e5019549f4a",
+    "name": "Tiền nước hàng tháng",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "0f56826a-1ca1-4c0b-98b2-3f2d47996b3a",
+    "name": "Tổng kết sổ chi tháng 11, 12",
+    "description": "Tổng kết sổ bù 2 tháng",
+    "type": "expense"
+  },
+  {
+    "id": "bb2a14e7-62ac-45cc-8fa6-62419a8b00db",
+    "name": "Trả lương NV",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "aad751b2-6263-4acc-ae61-f9baba7e19f3",
+    "name": "Túi giấy",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "14a553e6-7d68-4187-90a4-5924c0c66eb7",
+    "name": "Zalo OA",
+    "description": null,
+    "type": "expense"
+  },
+  {
+    "id": "2ef520b1-a943-4ca3-95c2-fc4f27ff930b",
+    "name": "Góp vốn cổ đông",
+    "description": null,
+    "type": "income"
+  },
+  {
+    "id": "be4e2c29-d800-40aa-b094-b92c6bbadb93",
+    "name": "Thanh toán hàng tồn",
+    "description": null,
+    "type": "income"
+  },
+  {
+    "id": "bb75ac18-3a57-4a57-999c-fd8aeeddbdc3",
+    "name": "Tiền khách trả",
+    "description": null,
+    "type": "income"
+  }
+]
